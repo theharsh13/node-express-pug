@@ -9,8 +9,12 @@ const adminData = require('./admin')
 const router = express.Router()
 
 router.get('/',(req,res,next)=>{
-    console.log(adminData.products);
-    res.sendFile(path.join(rootDir,'views', 'shop.html'))
+    //tells express to render output from shop.pug file
+    const products= adminData.products
+    res.render('shop', {
+        docTitle: 'Shop view',
+        prods : products
+    })
 })
 
 module.exports = router
