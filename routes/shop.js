@@ -2,20 +2,11 @@ const path = require('path')
 
 const express = require('express')
 
-const rootDir = require('../util/path')
-const adminData = require('./admin')
-
+// const rootDir = require('../util/path') //NOT IN USE - because of templeting engine
+const productsController = require('../controllers/products')
 
 const router = express.Router()
 
-router.get('/',(req,res,next)=>{
-    //tells express to render output from shop.pug file
-    const products= adminData.products
-    res.render('shop', {
-        docTitle: 'Shop view',
-        path : '/',
-        prods : products
-    })
-})
+router.get('/', productsController.getProducts)
 
 module.exports = router
