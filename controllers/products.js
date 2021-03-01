@@ -15,9 +15,11 @@ exports.postAddProduct = (req, res, next) => {
 
 exports.getProducts = (req,res,next)=>{
     //tells express to render output from shop.pug file
-    res.render('shop', {
-        docTitle: 'Shop view',
-        path : '/',
-        prods : Product.fetchAll()
+    Product.fetchAll((products)=>{
+      res.render('shop', {
+          docTitle: 'Shop view',
+          path : '/',
+          prods : products
+      })
     })
 }
