@@ -5,6 +5,7 @@ block styles
     
 block content 
     main
+        h1 Welcome to the shop!
         if prods.length > 0
             .grid 
                 each product in prods 
@@ -12,11 +13,13 @@ block content
                         header.card__header
                             h1.product__title #{product.title}
                         .card__image 
-                            img(src="https://www.writersdigest.com/.image/t_share/MTcxMDY0NzcxMzIzNTY5NDEz/image-placeholder-title.jpg", alt="A Book")
+                            img(src= product.imageurl, alt="A Book")
                         .card__content
-                            h2.product__price $19.99
-                            p.product__description A very interesting book about so many even more interesting things!
+                            h2.product__price #{product.price}
+                            p.product__description #{product.description}
                         .card__actions
-                            button.btn Add to Cart
+                            a(href="/products/"+product.id class="btn") Details 
+                            include ../layouts/add-to-cart.pug
+                            
         else 
             h1 No Products Available 

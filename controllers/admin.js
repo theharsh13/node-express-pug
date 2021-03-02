@@ -1,24 +1,65 @@
-const Product = require('../models/product')
+const Product = require("../models/product");
 
 exports.getAddProduct = (req, res, next) => {
-    res.render("admin/add-product", {
-      docTitle: "Add Product",
-      path: "/admin/add-product",
-    });
-  };
-  
-  exports.postAddProduct = (req, res, next) => {
-    const product = new Product(req.body.title, req.body.imageUrl, req.body.description, req.body.price)
-    product.save()
-    res.redirect("/");
-  };
+  res.render("admin/edit-product", {
+    docTitle: "Add Product",
+    path: "/admin/add-product",
+    editing: false,
+  });
+};
 
-  exports.getProducts = (req,res,next)=>{
-    Product.fetchAll((products) => {
-        res.render("admin/products", {
-          docTitle: "All Products",
-          path: "/admin/products",
-          prods: products,
-        });
-      });
-  }
+exports.postAddProduct = (req, res, next) => {
+  const product = new Product(
+    null,
+    req.body.title,
+    req.body.imageUrl,
+    req.body.description,
+    req.body.price
+  );
+  product.save();
+  res.redirect("/");
+};
+
+exports.getEditProduct = (req, res, next) => {
+  const editMode = req.query.edit;
+  if (!editMode) return res.redirect("/");
+
+  const productId = req.params.productId;
+  Product.findById(productId, (product) => {
+    if (!product) return res.redirect("/");
+    res.render("admin/edit-product", {
+      docTitle: "Edit Product",
+      path: "/admin/edit-product",
+      editing: editMode,
+      product: product,
+    });
+  });
+};
+
+exports.postEditProduct = (req, res, next) => {
+  const product = new Product(
+    req.body.productId,
+    req.body.title,
+    req.body.imageUrl,
+    req.body.description,
+    req.body.price
+  );
+  product.save();
+  res.redirect("/admin/products");
+};
+
+exports.postDeleteProduct = (req, res, next) => {
+  const productId = req.body.productId;
+  Product.deleteProduct(productId);
+  res.redirect("/admin/products");
+};
+
+exports.getProducts = (req, res, next) => {
+  Product.fetchAll((products) => {
+    res.render("admin/products", {
+      docTitle: "All Products",
+      path: "/admin/products",
+      prods: products,
+    });
+  });
+};
