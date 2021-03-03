@@ -1,32 +1,47 @@
-const http = require('http')
-const path = require('path')
+const http = require("http");
+const path = require("path");
 
-const express = require('express')
-const bodyParser = require('body-parser')
+const express = require("express");
+const bodyParser = require("body-parser");
 
 //create  helper function to get the root directory path
-const rootDir = require('./util/path')
+const rootDir = require("./util/path");
+const mongoConnect = require("./util/database").mongoConnect;
+const User = require("./models/user");
 
-const app = express()
+const app = express();
 // tell express to use 'pug' as view engine
-app.set('view engine', 'pug')
+app.set("view engine", "pug");
 // tell express to look for templetes in views dir // by default express checks for templetes in view dir only
-app.set('views','views')
+app.set("views", "views");
 
 //seperate out routes, provide modular code
-const adminRoutes = require('./routes/admin')
-const shopRoutes = require('./routes/shop')
-const errorController = require('./controllers/error')
+const adminRoutes = require("./routes/admin");
+const shopRoutes = require("./routes/shop");
+const errorController = require("./controllers/error");
 
-// middleware to notify express parse request body 
-app.use(bodyParser.urlencoded({extended : false})) 
+// middleware to notify express parse request body
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // notify express to not to handle public folder, generally all static files goes into these folders
-app.use(express.static(path.join(rootDir,'public')))
-app.use('/admin',adminRoutes.routes)
-app.use(shopRoutes) 
+app.use(express.static(path.join(rootDir, "public")));
+
+app.use((req, res, next) => {
+  User.findById('603f63f8d97a70e482c20344')
+    .then((user) => {
+        req.user=new User(user.username, user.email, user.cart, user._id);
+        next()
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+app.use("/admin", adminRoutes.routes);
+app.use(shopRoutes);
 
 // to handle 404 page
-app.use(errorController.get404)
+app.use(errorController.get404);
 
-app.listen(3000)
+mongoConnect(() => {
+  app.listen(3000);
+});

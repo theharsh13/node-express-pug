@@ -20,5 +20,5 @@ block content
                 label(for="price") Price
                 input(type="number",name="price" value=(editing == 'true' ? product.price : ''))#price
             if editing 
-                input(type="hidden", name="productId" value=product.id)
+                input(type="hidden", name="productId" value=product._id)
             button.btn.centered(type="submit") #{editing == 'true' ? 'Update Product' : 'Add Product'}
