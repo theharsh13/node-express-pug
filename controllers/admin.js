@@ -9,17 +9,16 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.postAddProduct = (req, res, next) => {
-  const product = new Product(
-    req.body.title,
-    req.body.imageUrl,
-    req.body.description,
-    req.body.price,
-    null,
-    req.user._id
-  );
+  const product = new Product({
+    title: req.body.title,
+    price: req.body.price,
+    imageurl: req.body.imageUrl,
+    description: req.body.description,
+    userId: req.user //or req.user._id
+  });
   product
     .save()
-    .then((result) => {
+    .then((result) => { 
       res.redirect("/");
     })
     .catch((err) => {
@@ -48,16 +47,21 @@ exports.getEditProduct = (req, res, next) => {
 };
 
 exports.postEditProduct = (req, res, next) => {
-  const product = new Product(
-    req.body.title,
-    req.body.imageUrl,
-    req.body.description,
-    req.body.price,
-    req.body.productId
-  );
+  const title = req.body.title;
+  const imageUrl = req.body.imageUrl;
+  const description = req.body.description;
+  const price = req.body.price;
+  const productId = req.body.productId;
 
-  product
-    .save()
+  Product.findById(productId)
+    .then((product) => {
+      product.title = title;
+      product.imageurl = imageUrl;
+      product.description = description;
+      product.price = price;
+
+      return product.save();
+    })
     .then((result) => {
       res.redirect("/admin/products");
     })
@@ -69,7 +73,7 @@ exports.postEditProduct = (req, res, next) => {
 exports.postDeleteProduct = (req, res, next) => {
   const productId = req.body.productId;
 
-  Product.deleteProduct(productId)
+  Product.findByIdAndDelete(productId)
     .then((result) => {
       res.redirect("/admin/products");
     })
@@ -79,8 +83,10 @@ exports.postDeleteProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll()
+  Product.find()
+    .populate('userId','username') // populate nested data  
     .then((products) => {
+      // console.log(products);
       res.render("admin/products", {
         docTitle: "All Products",
         path: "/admin/products",

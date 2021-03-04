@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 
 //create  helper function to get the root directory path
 const rootDir = require("./util/path");
-const mongoConnect = require("./util/database").mongoConnect;
+const mongoose = require("mongoose");
 const User = require("./models/user");
 
 const app = express();
@@ -27,10 +27,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(rootDir, "public")));
 
 app.use((req, res, next) => {
-  User.findById('603f63f8d97a70e482c20344')
+  User.findById("60407f5eead33449ecb962c2")
     .then((user) => {
-        req.user=new User(user.username, user.email, user.cart, user._id);
-        next()
+      req.user = user;
+      next();
     })
     .catch((err) => {
       console.log(err);
@@ -42,6 +42,24 @@ app.use(shopRoutes);
 // to handle 404 page
 app.use(errorController.get404);
 
-mongoConnect(() => {
-  app.listen(3000);
-});
+mongoose
+  .connect("mongodb://localhost:27017/shop")
+  .then((result) => {
+    console.log("=============== MongoDB Connected! =============="); 
+    console.log("========== Starting server at port 3000 =========");
+
+    User.findOne({ _id: "60407f5eead33449ecb962c2" }).then((user) => {
+      if (!user) {
+        const user = new User({
+          username: "Harsh",
+          email: "harsh_patel@persistent.com",
+          cart: {
+            items: [],
+          },
+        }).save();
+      }
+    });
+
+    app.listen(3000);
+  })
+  .catch((err) => console.log(err));
