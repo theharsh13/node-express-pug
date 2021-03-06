@@ -9,6 +9,7 @@ exports.getProducts = (req, res, next) => {
         docTitle: "All Products",
         path: "/products",
         prods: products,
+        isAuthenticated: req.session.isLoggedIn
       });
     })
     .catch((err) => {
@@ -25,6 +26,7 @@ exports.getProduct = (req, res, next) => {
         docTitle: product.title,
         path: "/products",
         product: product,
+        isAuthenticated: req.session.isLoggedIn
       });
     })
     .catch((err) => console.log(err));
@@ -32,12 +34,14 @@ exports.getProduct = (req, res, next) => {
 
 exports.getIndex = (req, res, next) => {
   //tells express to render output from shop.pug file
+  console.log('req.isLoggedIn : ' ,req.isLoggedIn);
   Product.find()
     .then((products) => {
       res.render("shop/product-list", {
         docTitle: "All Products",
         path: "/",
         prods: products,
+        isAuthenticated: req.session.isLoggedIn
       });
     })
     .catch((err) => {
@@ -56,6 +60,7 @@ exports.getCart = (req, res, next) => {
         docTitle: user.username + "'s Cart",
         path: "/cart",
         products: products,
+        isAuthenticated: req.session.isLoggedIn
       });
     })
     .catch((err) => {
@@ -97,6 +102,7 @@ exports.getOrders = (req, res, next) => {
         docTitle: "Orders",
         path: "/orders",
         orders: orders,
+        isAuthenticated: req.session.isLoggedIn
       });
     })
     .catch((err) => {
@@ -140,5 +146,6 @@ exports.getCheckout = (req, res, next) => {
   res.render("shop/checkout", {
     docTitle: "Checkout",
     path: "/checkout",
+    isAuthenticated: req.session.isLoggedIn
   });
 };

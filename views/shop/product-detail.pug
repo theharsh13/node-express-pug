@@ -6,5 +6,6 @@ block content
         hr
         img(src=product.imageurl, alt=product.title)
         p #{product.description}
-        h2 #{product.price}
-        include ../layouts/add-to-cart.pug
+        h2 Price: $ #{product.price}
+        if isAuthenticated
+            include ../layouts/add-to-cart.pug
