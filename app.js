@@ -34,22 +34,27 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(rootDir, "public")));
 
 app.use(
-  session({ secret: "my secret", resave: false, saveUninitialized: false, store: store })
+  session({
+    secret: "my secret",
+    resave: false,
+    saveUninitialized: false,
+    store: store,
+  })
 );
 
-app.use((req,res,next)=>{
-  if(!req.session.user){
+app.use((req, res, next) => {
+  if (!req.session.user) {
     return next();
   }
   User.findById(req.session.user._id)
     .then((user) => {
-      req.user = user
-      next()
+      req.user = user;
+      next();
     })
     .catch((err) => {
       console.log(err);
     });
-})
+});
 
 app.use("/admin", adminRoutes.routes);
 app.use(shopRoutes);
@@ -63,18 +68,6 @@ mongoose
   .then((result) => {
     console.log("=============== MongoDB Connected! ==============");
     console.log("========== Starting server at port 3000 =========");
-
-    User.findOne({ _id: "60407f5eead33449ecb962c2" }).then((user) => {
-      if (!user) {
-        const user = new User({
-          username: "Harsh",
-          email: "harsh_patel@persistent.com",
-          cart: {
-            items: [],
-          },
-        }).save();
-      }
-    });
 
     app.listen(3000);
   })

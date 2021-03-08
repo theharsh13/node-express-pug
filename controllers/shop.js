@@ -34,7 +34,6 @@ exports.getProduct = (req, res, next) => {
 
 exports.getIndex = (req, res, next) => {
   //tells express to render output from shop.pug file
-  console.log('req.isLoggedIn : ' ,req.isLoggedIn);
   Product.find()
     .then((products) => {
       res.render("shop/product-list", {

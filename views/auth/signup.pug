@@ -1,0 +1,20 @@
+extends ../layouts/main-layout.pug
+
+block styles 
+    link(rel="stylesheet", href="/css/product.css")
+    link(rel="stylesheet", href="/css/forms.css")
+    link(rel="stylesheet", href="/css/auth.css")
+    
+block content 
+    main
+        form.login-form(action='/signup' method="post")
+            div.form-control
+                label(for="email") E-Mail
+                input(type="text",name="email")#email
+            div.form-control
+                label(for="password") Password 
+                input(type="password",name="password" )#password
+            div.form-control
+                label(for="password") Confirm Password 
+                input(type="password",name="confirmpassword" )#confirmpassword
+            button.btn.centered(type="submit") Signup
