@@ -5,7 +5,6 @@ exports.getAddProduct = (req, res, next) => {
     docTitle: "Add Product",
     path: "/admin/add-product",
     editing: false,
-    isAuthenticated: req.session.isLoggedIn
   });
 };
 
@@ -19,7 +18,7 @@ exports.postAddProduct = (req, res, next) => {
   });
   product
     .save()
-    .then((result) => { 
+    .then((result) => {
       res.redirect("/");
     })
     .catch((err) => {
@@ -40,7 +39,6 @@ exports.getEditProduct = (req, res, next) => {
         path: "/admin/edit-product",
         editing: editMode,
         product: product,
-        isAuthenticated: req.session.isLoggedIn
       });
     })
     .catch((err) => {
@@ -86,14 +84,13 @@ exports.postDeleteProduct = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
   Product.find()
-    .populate('userId','username') // populate nested data  
+    .populate("userId", "username") // populate nested data
     .then((products) => {
       // console.log(products);
       res.render("admin/products", {
         docTitle: "All Products",
         path: "/admin/products",
         prods: products,
-        isAuthenticated: req.session.isLoggedIn
       });
     })
     .catch((err) => {

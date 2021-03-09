@@ -39,8 +39,7 @@ exports.getIndex = (req, res, next) => {
       res.render("shop/product-list", {
         docTitle: "All Products",
         path: "/",
-        prods: products,
-        isAuthenticated: req.session.isLoggedIn
+        prods: products
       });
     })
     .catch((err) => {

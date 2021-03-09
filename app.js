@@ -5,6 +5,9 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
+const csrf = require("csurf");
+const flash = require("connect-flash");
+
 
 //create  helper function to get the root directory path
 const rootDir = require("./util/path");
@@ -15,6 +18,8 @@ const MONGO_URI = "mongodb://localhost:27017/shop";
 
 const app = express();
 const store = new MongoDBStore({ uri: MONGO_URI, collection: "sessions" });
+
+const csrfProtection = csrf();
 
 // tell express to use 'pug' as view engine
 app.set("view engine", "pug");
@@ -42,6 +47,9 @@ app.use(
   })
 );
 
+app.use(csrfProtection);
+app.use(flash())
+
 app.use((req, res, next) => {
   if (!req.session.user) {
     return next();
@@ -54,6 +62,12 @@ app.use((req, res, next) => {
     .catch((err) => {
       console.log(err);
     });
+});
+
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
 });
 
 app.use("/admin", adminRoutes.routes);

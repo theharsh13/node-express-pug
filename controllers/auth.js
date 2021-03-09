@@ -3,10 +3,12 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 
 exports.getLogin = (req, res, next) => {
+  let message = req.flash("error");
+  message = message.length > 0 ? message[0] : null;
   res.render("auth/login", {
     docTitle: "Login",
     path: "/login",
-    isAuthenticated: false,
+    errorMessage: message,
   });
 };
 
@@ -17,6 +19,7 @@ exports.postLogin = (req, res, next) => {
   User.findOne({ email: email })
     .then((user) => {
       if (!user) {
+        req.flash("error", "Invalid username or password.");
         return res.redirect("/login");
       }
       bcrypt
@@ -27,9 +30,11 @@ exports.postLogin = (req, res, next) => {
             req.session.isLoggedIn = true;
             return req.session.save((err) => {
               if (err) console.log("error in postLogin : ", err);
+              req.flash("error", "Invalid username or password.");
               res.redirect("/");
             });
           }
+          req.flash("error", "Invalid username or password.");
           res.redirect("/login");
         })
         .catch((err) => {
@@ -43,11 +48,13 @@ exports.postLogin = (req, res, next) => {
 };
 
 exports.getSignup = (req, res, next) => {
-  console.log(req.session);
+  let message = req.flash("error");
+  message = message.length > 0 ? message[0] : null;
   res.render("auth/signup", {
     docTitle: "Signup",
     path: "/signup",
     isAuthenticated: false,
+    errorMessage: message,
   });
 };
 
@@ -58,7 +65,8 @@ exports.postSignup = (req, res, next) => {
 
   User.findOne({ email: email })
     .then((user) => {
-      if (!user) {
+      if (user) {
+        req.flash("error", "Email already exists!");
         return res.redirect("/signup");
       }
       return bcrypt

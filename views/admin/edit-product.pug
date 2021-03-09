@@ -21,4 +21,5 @@ block content
                 input(type="number",name="price" value=(editing == 'true' ? product.price : ''))#price
             if editing 
                 input(type="hidden", name="productId" value=product._id)
+            input(type="hidden", name="_csrf", value=csrfToken)
             button.btn.centered(type="submit") #{editing == 'true' ? 'Update Product' : 'Add Product'}

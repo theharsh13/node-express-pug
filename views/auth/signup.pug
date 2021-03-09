@@ -8,6 +8,8 @@ block styles
 block content 
     main
         form.login-form(action='/signup' method="post")
+            if errorMessage
+                div.user-message.user-message--error #{errorMessage}
             div.form-control
                 label(for="email") E-Mail
                 input(type="text",name="email")#email
@@ -17,4 +19,5 @@ block content
             div.form-control
                 label(for="password") Confirm Password 
                 input(type="password",name="confirmpassword" )#confirmpassword
+            input(type="hidden", name="_csrf", value=csrfToken)
             button.btn.centered(type="submit") Signup
